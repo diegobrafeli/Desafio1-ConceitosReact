@@ -27,14 +27,17 @@ export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
+  /*
+  Como eu fiz para alterar
   if(newTaskTitle == "ok"){
     setNewTaskTitle("");
   }
+  */
 
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
 
-    if(newTaskTitle == ""){
+    if(!newTaskTitle){ //ou if(newTaskTitle == ""){
       //alert('É obrigatorio inserir um titulo.');
       return;
     }
@@ -47,6 +50,7 @@ export function TaskList() {
     } 
 
     randomico = getRandomIntInclusive(randomicoMin,randomicoMax);
+    
 
     while (xArray.indexOf(randomico) != -1) {
       randomico = getRandomIntInclusive(randomicoMin,randomicoMax);
@@ -54,10 +58,23 @@ export function TaskList() {
 
     console.log('array:',xArray,'indexof',xArray.indexOf(randomico));
 
+    /*
+    //Fiz assim e funciona
     list = tasks;
     list.push({id:randomico,title:newTaskTitle,isComplete:false});
 
-    setTasks(list);
+    setTasks(list);*/
+
+    //forma mais certa----------------
+
+    const newTask = {
+      id: randomico,
+      title: newTaskTitle,
+      isComplete:false
+    }
+    setTasks(oldState => [...oldState, newTask]);
+    //--------------------------------
+
     setNewTaskTitle("");
     console.log(randomico,list);
     xArray.push(randomico);
@@ -65,8 +82,10 @@ export function TaskList() {
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    /*
+    Forma q eu fiz
     list = tasks;
-
+    
     list.map( val => { 
       
       if(val.id == id){
@@ -76,14 +95,22 @@ export function TaskList() {
       }
 
     });
+    */
+    //Forma Certa ----------------------
+    const newtask = tasks.map(task => task.id === id ? {
+      ...task, isComplete: !task.isComplete
+    } : task);
 
+    setTasks(newtask);
+    //----------------------------------
     
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    /*
+    //Como eu fiz
     list = tasks;
-
     list.map( (elemento, indice) => { 
       
       if(elemento.id == id){
@@ -95,7 +122,18 @@ export function TaskList() {
       }
 
     });
+    */
+    //Forma mais certa-----------------
+    tasks.map( (elemento, indice) => { 
+      if(elemento.id == id){
+        xArray.splice(indice,1);
+      }
+    });
 
+    const filteredTask = tasks.filter(task => task.id !==id);
+    setTasks(filteredTask);
+
+    //---------------------------------
 
   }
 
