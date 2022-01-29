@@ -10,20 +10,93 @@ interface Task {
   isComplete: boolean;
 }
 
+
+function getRandomIntInclusive(min:number, max:number) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+let randomico = 0;
+const randomicoMin = 1, randomicoMax = 100;
+let xArray : Array<number> = [];
+
+let list: Array<Task>;
+
 export function TaskList() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [newTaskTitle, setNewTaskTitle] = useState('');
 
+  if(newTaskTitle == "ok"){
+    setNewTaskTitle("");
+  }
+
   function handleCreateNewTask() {
     // Crie uma nova task com um id random, não permita criar caso o título seja vazio.
+
+    if(newTaskTitle == ""){
+      //alert('É obrigatorio inserir um titulo.');
+      return;
+    }
+    
+
+    if(xArray.length == randomicoMax){
+      alert("Número maximo de task atingido");
+      setNewTaskTitle("");
+      return;
+    } 
+
+    randomico = getRandomIntInclusive(randomicoMin,randomicoMax);
+
+    while (xArray.indexOf(randomico) != -1) {
+      randomico = getRandomIntInclusive(randomicoMin,randomicoMax);
+    }
+
+    console.log('array:',xArray,'indexof',xArray.indexOf(randomico));
+
+    list = tasks;
+    list.push({id:randomico,title:newTaskTitle,isComplete:false});
+
+    setTasks(list);
+    setNewTaskTitle("");
+    console.log(randomico,list);
+    xArray.push(randomico);
   }
 
   function handleToggleTaskCompletion(id: number) {
     // Altere entre `true` ou `false` o campo `isComplete` de uma task com dado ID
+    list = tasks;
+
+    list.map( val => { 
+      
+      if(val.id == id){
+        val.isComplete =  val.isComplete ? false : true;
+        setTasks(list);
+        setNewTaskTitle("ok");
+      }
+
+    });
+
+    
   }
 
   function handleRemoveTask(id: number) {
     // Remova uma task da listagem pelo ID
+    list = tasks;
+
+    list.map( (elemento, indice) => { 
+      
+      if(elemento.id == id){
+        list.splice(indice,1);
+        xArray.splice(indice,1);
+        setTasks(list);
+        setNewTaskTitle("ok");
+        return;
+      }
+
+    });
+
+
   }
 
   return (
